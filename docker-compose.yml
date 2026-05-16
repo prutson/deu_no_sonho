@@ -1,0 +1,32 @@
+services:
+  app:
+    build: .
+    container_name: deunosonho-app
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+    volumes:
+      - ./app:/app/app
+      - ./static:/app/static
+      - ./templates:/app/templates
+    networks:
+      - deunosonho-net
+
+  redis:
+    image: redis:7-alpine
+    container_name: deunosonho-redis
+    restart: unless-stopped
+    volumes:
+      - redis-data:/data
+    networks:
+      - deunosonho-net
+
+networks:
+  deunosonho-net:
+    driver: bridge
+
+volumes:
+  redis-data:

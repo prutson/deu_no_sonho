@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
+  <title>deu no sonho</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jomhuria&display=swap" rel="stylesheet">
+  <link rel="icon" href="/static/images/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/static/css/style.css?v={{ v }}">
+</head>
+<body>
+  <div id="app">
+    <header id="header">
+      <div class="header-left">
+        <img class="avatar-tio" src="/static/images/favicon.svg" alt="Tio" width="40" height="40">
+        <div class="header-info">
+          <a href="/sobre" class="link-sobre"><h1>deu no sonho</h1></a>
+          <span class="header-status">
+            <span class="status-dot"></span>
+            <span id="header-status-texto">online</span>
+          </span>
+        </div>
+      </div>
+      <div class="header-links">
+        <a href="https://github.com/prutson/deu_no_sonho" target="_blank" rel="noopener" aria-label="GitHub">
+          <img src="/static/images/github.svg" alt="GitHub" width="30" height="30">
+        </a>
+      </div>
+    </header>
+
+    <main id="chat" class="chat-area" aria-live="polite" aria-label="Conversa">
+      <div class="bolha usuario" style="animation:none">{{ copy.SAUDACAO_USUARIO }}</div>
+      <div class="bolha tio" style="animation:none">{{ copy.SAUDACAO_1 }}</div>
+      <div class="bolha tio" style="animation:none">{{ copy.SAUDACAO_2 }}</div>
+    </main>
+
+    <div id="botao-novo-sonho" class="hidden">
+      <button id="btn-novo-sonho">Contar outro sonho</button>
+    </div>
+
+    <div id="botao-recuperar-recusa" class="hidden">
+      <button id="btn-recuperar-recusa">Foi mal, tio. Bora lá?</button>
+    </div>
+
+    <footer id="input-area">
+      <p class="aviso-folclore">
+        {{ copy.AVISO_FOLCLORE }}
+      </p>
+      <form id="form-sonho" class="input-wrapper" novalidate>
+        <input
+          type="text"
+          id="input-sonho"
+          maxlength="500"
+          placeholder="Sonhei que tava no casamento da minha prima quando de repente..."
+          autocomplete="off"
+          autocorrect="on"
+          aria-label="Conte seu sonho"
+        >
+        <button id="botao-enviar" type="submit" aria-label="Enviar">
+          <img src="/static/images/botao_enviar.svg" alt="" aria-hidden="true" width="40" height="40">
+        </button>
+      </form>
+    </footer>
+  </div>
+
+  <script>
+    window.__COPY = {{ copy_json | safe }};
+  </script>
+  <script src="/static/js/app.js?v={{ v }}"></script>
+</body>
+</html>

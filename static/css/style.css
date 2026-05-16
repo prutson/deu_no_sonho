@@ -1,0 +1,563 @@
+/* ─── Variáveis ─────────────────────────────────────────────────────────── */
+:root {
+  --verde-escuro: #255731;
+  --bege: #ede0c8;
+  --dourado: #e9ce95;
+  --branco: #ffffff;
+  --cinza-input: #d8d8d8;
+}
+
+/* ─── Reset e base ───────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  height: 100%;
+  margin: 0;
+  background-color: var(--bege);
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  color: var(--verde-escuro);
+  touch-action: manipulation;
+  overflow: hidden;
+}
+
+#app {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ─── Header — padrão compartilhado index + sobre ───────────────────────── */
+#header {
+  background: var(--verde-escuro);
+  display: flex;
+  align-items: center;
+  padding: 0 28px;
+  flex-shrink: 0;
+  z-index: 100;
+  height: 76px;
+  gap: 12px;
+  position: relative;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+#header .header-title-centered {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-family: 'Jomhuria', serif;
+  font-size: 48px;
+  font-weight: 400;
+  color: var(--dourado);
+  line-height: 0.75;
+  letter-spacing: 1px;
+  text-align: center;
+  margin: 0;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.avatar-tio {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  object-fit: cover;
+}
+
+.header-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+#header h1 {
+  font-family: 'Jomhuria', serif;
+  font-size: 48px;
+  font-weight: 400;
+  color: var(--dourado);
+  line-height: 0.75;
+  letter-spacing: 1px;
+}
+
+.header-status {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 12px;
+  margin-top: -8px;
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #4CAF50;
+  flex-shrink: 0;
+  animation: pulsar-dot 2.5s ease-in-out infinite;
+}
+
+@keyframes pulsar-dot {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
+
+.status-dot.offline {
+  background: #e53935;
+  animation: none;
+}
+
+.header-links {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.header-links a {
+  display: flex;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+
+.header-links a:hover {
+  opacity: 1;
+}
+
+/* ─── Área de chat — único elemento que rola ─────────────────────────────── */
+.chat-area {
+  flex: 1;
+  min-height: 0; /* crítico: sem isso o flex não rola corretamente */
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 12px 24px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  /* Scrollbar Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(37, 87, 49, 0.22) transparent;
+}
+
+/* Scrollbar Webkit */
+.chat-area::-webkit-scrollbar        { width: 5px; }
+.chat-area::-webkit-scrollbar-track  { background: transparent; }
+.chat-area::-webkit-scrollbar-thumb  { background: rgba(37, 87, 49, 0.22); border-radius: 3px; }
+.chat-area::-webkit-scrollbar-thumb:hover { background: rgba(37, 87, 49, 0.40); }
+
+/* ─── Bolhas ─────────────────────────────────────────────────────────────── */
+@keyframes entrarBolha {
+  from { opacity: 0; transform: translateY(15px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.bolha {
+  max-width: 82%;
+  padding: 14px 16px;
+  line-height: 1.5;
+  font-size: 15px;
+  animation: entrarBolha 250ms ease-out;
+  word-break: break-word;
+}
+
+/* Tio (esquerda): topo-esquerdo reto — estilo WhatsApp */
+.bolha.tio {
+  background: var(--branco);
+  color: var(--verde-escuro);
+  align-self: flex-start;
+  border-radius: 4px 16px 16px 16px;
+}
+
+/* Usuário (direita): topo-direito reto — estilo WhatsApp */
+.bolha.usuario {
+  background: var(--dourado);
+  color: var(--verde-escuro);
+  align-self: flex-end;
+  border-radius: 16px 4px 16px 16px;
+}
+
+/* Alerta do veredito — parece o tio continuando a falar */
+.alerta-veredito {
+  display: block;
+  margin-top: 10px;
+}
+
+/* ─── Indicador de digitação (3 bolinhas) ───────────────────────────────── */
+@keyframes pular {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.35; }
+  30%            { transform: translateY(-6px); opacity: 1; }
+}
+
+.bolha.pensando {
+  display: inline-flex;
+  gap: 5px;
+  align-items: center;
+  padding: 16px 18px;
+  min-height: 52px;
+}
+
+.bolha.pensando span {
+  width: 8px;
+  height: 8px;
+  background: var(--verde-escuro);
+  border-radius: 50%;
+  animation: pular 1.4s infinite ease-in-out;
+}
+
+.bolha.pensando span:nth-child(2) { animation-delay: 0.2s; }
+.bolha.pensando span:nth-child(3) { animation-delay: 0.4s; }
+
+/* ─── Botões de ação ──────────────────────────────────────────────────────── */
+#botao-novo-sonho,
+#botao-recuperar-recusa {
+  display: flex;
+  justify-content: center;
+  padding: 6px 16px 10px;
+  flex-shrink: 0;
+}
+
+#btn-novo-sonho,
+#btn-recuperar-recusa {
+  background: var(--verde-escuro);
+  color: var(--dourado);
+  border: none;
+  border-radius: 24px;
+  padding: 13px 28px;
+  font-size: 15px;
+  font-family: inherit;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: opacity 150ms;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#btn-novo-sonho:hover,
+#btn-novo-sonho:active,
+#btn-recuperar-recusa:hover,
+#btn-recuperar-recusa:active {
+  opacity: 0.85;
+}
+
+/* ─── Área de input — fixa embaixo ──────────────────────────────────────── */
+#input-area {
+  flex-shrink: 0;
+  background: var(--bege);
+  padding: 6px 16px max(20px, env(safe-area-inset-bottom, 20px));
+}
+
+.aviso-folclore {
+  font-size: 11px;
+  color: rgba(37, 87, 49, 0.55);
+  text-align: center;
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+.input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+#input-sonho {
+  flex: 1;
+  border: none;
+  border-radius: 24px;
+  padding: 13px 18px;
+  font-size: 16px; /* 16px impede zoom automático no iOS */
+  font-family: inherit;
+  background: var(--branco);
+  color: var(--verde-escuro);
+  outline: none;
+  -webkit-appearance: none;
+}
+
+#input-sonho::placeholder {
+  color: rgba(37, 87, 49, 0.35);
+}
+
+#input-sonho:disabled {
+  background: var(--cinza-input);
+  color: rgba(37, 87, 49, 0.35);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+#botao-enviar {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition: opacity 150ms;
+}
+
+/* A imagem não deve capturar eventos de toque */
+#botao-enviar img {
+  pointer-events: none;
+  display: block;
+}
+
+#botao-enviar:hover:not(:disabled),
+#botao-enviar:active:not(:disabled) {
+  opacity: 0.82;
+}
+
+#botao-enviar:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* ─── Utilitários ────────────────────────────────────────────────────────── */
+.hidden {
+  display: none !important;
+}
+
+/* ─── Link "sobre" no header principal ──────────────────────────────────── */
+.link-sobre {
+  color: inherit;
+  text-decoration: none;
+  display: block;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ─── Página /sobre ──────────────────────────────────────────────────────── */
+.sobre-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--bege);
+}
+
+
+.seta-voltar {
+  color: var(--dourado);
+  font-size: 40px;
+  font-weight: 300;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  line-height: 1;
+  padding: 4px 8px 4px 0;
+  -webkit-tap-highlight-color: transparent;
+  transition: opacity 150ms;
+}
+
+.seta-voltar:hover {
+  opacity: 0.8;
+}
+
+.sobre-content {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(37, 87, 49, 0.22) transparent;
+}
+
+.sobre-content::-webkit-scrollbar        { width: 5px; }
+.sobre-content::-webkit-scrollbar-track  { background: transparent; }
+.sobre-content::-webkit-scrollbar-thumb  { background: rgba(37, 87, 49, 0.22); border-radius: 3px; }
+
+.sobre-texto {
+  padding: 0 40px 50px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.sobre-texto p {
+  font-size: 15px;
+  color: var(--verde-escuro);
+  line-height: 1.6;
+}
+
+.sobre-texto a {
+  color: var(--verde-escuro);
+  text-decoration: underline;
+}
+
+.identidade-bloco {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 24px 28px;
+  gap: 16px;
+}
+
+.avatar-circulo {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.avatar-circulo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.identidade {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.identidade-nome {
+  font-family: 'Jomhuria', serif;
+  font-size: 60px;
+  font-weight: 400;
+  color: var(--verde-escuro);
+  line-height: 0.85;
+  letter-spacing: 0;
+}
+
+.identidade-status {
+  font-style: italic;
+  font-size: 14px;
+  color: rgba(37, 87, 49, 0.65);
+  line-height: 1.4;
+}
+
+.cards {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0 16px 28px;
+}
+
+.card {
+  background: var(--branco);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 1px 4px rgba(37, 87, 49, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.card h2 {
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(37, 87, 49, 0.55);
+  letter-spacing: 0.5px;
+  text-transform: lowercase;
+}
+
+.card p {
+  font-size: 15px;
+  color: var(--verde-escuro);
+  line-height: 1.6;
+}
+
+.card a {
+  color: var(--verde-escuro);
+  text-decoration: underline;
+}
+
+.icon-github {
+  width: 15px;
+  height: 15px;
+  vertical-align: middle;
+  margin-right: 5px;
+  filter: brightness(0) opacity(0.65);
+  display: inline-block;
+}
+
+.rodape-sobre {
+  text-align: center;
+  padding: 0 16px 48px;
+}
+
+.rodape-sobre a {
+  font-size: 12px;
+  color: rgba(37, 87, 49, 0.50);
+  text-decoration: none;
+}
+
+.rodape-sobre a:hover {
+  color: var(--verde-escuro);
+}
+
+/* ─── Desktop — card centralizado ─────────────────────────────────────────── */
+@media (min-width: 768px) {
+  html {
+    background: linear-gradient(135deg, #d4c9a8 0%, #e0d4b8 50%, #d4c9a8 100%);
+  }
+
+  body {
+    background: transparent;
+  }
+
+  #app {
+    width: 900px;
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    right: auto;
+    bottom: auto;
+    height: calc(100% - 48px);
+    border-radius: 20px;
+    box-shadow: 0 4px 40px rgba(37, 87, 49, 0.10), 0 1px 8px rgba(37, 87, 49, 0.06);
+  }
+
+  #header {
+    border-radius: 20px 20px 0 0;
+  }
+
+  #input-area {
+    border-radius: 0 0 20px 20px;
+  }
+
+  /* sobre — mesmo posicionamento e tamanho que #app */
+  .sobre-wrapper {
+    width: 900px;
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    right: auto;
+    bottom: auto;
+    height: calc(100% - 48px);
+    border-radius: 20px;
+    box-shadow: 0 4px 40px rgba(37, 87, 49, 0.10), 0 1px 8px rgba(37, 87, 49, 0.06);
+  }
+}
