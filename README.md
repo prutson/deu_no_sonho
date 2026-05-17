@@ -4,6 +4,8 @@ Um site que interpreta seus sonhos no bicho. Você conta o sonho, o tio faz umas
 
 Feito com FastAPI, Redis, e a API da DeepSeek (ou qualquer provedor compatível com OpenAI SDK). Sem framework JS, sem firula. Vanilla JS, CSS na unha, e muito carinho.
 
+**Acesse em:** [deunosonho.com.br](https://deunosonho.com.br)
+
 ## Como funciona
 
 1. Você chega e conta um sonho
