@@ -59,5 +59,19 @@
 
     </div>
   </div>
+  {% if ga4_id %}
+  <script>window.__GA4_ID = "{{ ga4_id }}";</script>
+  <div id="cookie-banner" class="cookie-banner hidden" role="dialog" aria-label="Consentimento de cookies">
+    <div class="cookie-banner-texto">
+      <strong>Privacidade</strong>
+      <p>Usamos cookies do Google para entender como o site é usado. Recusar não afeta nenhuma funcionalidade.</p>
+    </div>
+    <div class="cookie-banner-botoes">
+      <button id="btn-cookie-recusar">Recusar</button>
+      <button id="btn-cookie-aceitar">Aceitar</button>
+    </div>
+  </div>
+  <script src="/static/js/cookie-consent.js?v={{ v }}"></script>
+  {% endif %}
 </body>
 </html>

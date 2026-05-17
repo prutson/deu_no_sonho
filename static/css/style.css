@@ -342,6 +342,81 @@ body {
   display: none !important;
 }
 
+/* ─── Banner de consentimento de cookies (LGPD) ──────────────────────────── */
+.cookie-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 200;
+  background: var(--verde-escuro);
+  color: var(--bege);
+  padding: 14px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.22);
+}
+
+.cookie-banner strong {
+  font-size: 0.9rem;
+}
+
+.cookie-banner p {
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  opacity: 0.88;
+}
+
+.cookie-banner a {
+  color: var(--dourado);
+  text-decoration: underline;
+}
+
+.cookie-banner-botoes {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.cookie-banner-botoes button {
+  padding: 7px 18px;
+  border-radius: 20px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 600;
+  font-family: inherit;
+  transition: opacity 0.15s;
+}
+
+.cookie-banner-botoes button:hover {
+  opacity: 0.82;
+}
+
+#btn-cookie-recusar {
+  background: transparent;
+  color: var(--bege);
+  border: 1.5px solid rgba(237, 224, 200, 0.5);
+}
+
+#btn-cookie-aceitar {
+  background: var(--dourado);
+  color: var(--verde-escuro);
+}
+
+@media (min-width: 640px) {
+  .cookie-banner {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    width: 900px;
+    bottom: 24px;
+    border-radius: 0 0 20px 20px;
+  }
+}
+
 /* ─── Link "sobre" no header principal ──────────────────────────────────── */
 .link-sobre {
   color: inherit;

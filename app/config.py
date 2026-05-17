@@ -15,6 +15,9 @@ class Settings(BaseSettings):
     app_domain: str
     allow_localhost: bool = False
 
+    # Analytics (opcional — deixe em branco para desativar)
+    ga4_measurement_id: str = ""
+
     # Limites
     rate_limit_por_dia: int = 3
     max_chars_sonho: int = 500

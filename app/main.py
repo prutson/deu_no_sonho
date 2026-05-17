@@ -85,12 +85,17 @@ async def index(request: Request):
         "v": int(time.time()),
         "copy_json": json.dumps(COPY_DATA),
         "copy": COPY_DATA,
+        "ga4_id": settings.ga4_measurement_id,
     })
 
 
 @app.get("/sobre")
 async def sobre(request: Request):
-    return templates.TemplateResponse("sobre.html", {"request": request, "v": int(time.time())})
+    return templates.TemplateResponse("sobre.html", {
+        "request": request,
+        "v": int(time.time()),
+        "ga4_id": settings.ga4_measurement_id,
+    })
 
 
 @app.get("/api/copy")
