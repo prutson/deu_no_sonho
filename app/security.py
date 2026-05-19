@@ -12,7 +12,7 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
 
         if settings.ga4_measurement_id:
             script_src += " https://www.googletagmanager.com"
-            connect_src += " https://*.google-analytics.com https://*.analytics.google.com"
+            connect_src += " https://*.google-analytics.com https://*.analytics.google.com https://www.google.com"
 
         self._csp = (
             "default-src 'self'; "

@@ -8,6 +8,12 @@ const API_URL = '/api/chat';
 let conversa = null;
 let aguardando = false;
 
+function trackEvent(nome, params) {
+  if (typeof window.gtag === 'function') {
+    window.gtag('event', nome, params || {});
+  }
+}
+
 function gerarId() {
   try { return crypto.randomUUID(); }
   catch {
@@ -117,6 +123,7 @@ function criarNovaConversa() {
     recusaOfensas: 0,
   };
   salvarSessao();
+  trackEvent('chat_iniciado');
   renderizarConversa();
 }
 
@@ -202,6 +209,7 @@ function enviarMensagem() {
   conversa.mensagens.push(msg);
 
   adicionarBolhaDom(msg);
+  trackEvent('mensagem_enviada', { tipo: msg.tipo });
   salvarSessao();
 
   setInputDesabilitado(true);
@@ -283,6 +291,7 @@ function tratarResposta(data) {
   if (data.tipo === 'veredito') {
     conversa.etapa = 'finalizada';
     adicionarBolhaDom(msg);
+    trackEvent('veredito_recebido', { eh_ultimo: !!data.eh_ultimo });
     setInputDesabilitado(true);
     if (data.eh_ultimo) conversa.limiteAtingido = true;
     document.getElementById('botao-novo-sonho').classList.remove('hidden');
@@ -420,6 +429,7 @@ function novoSonho() {
   conversa.mensagens = [msgUsuario, msgTio];
   conversa.etapa = 'aguardando_sonho';
   conversa.vezesNovoSonho += 1;
+  trackEvent('novo_sonho');
 
   adicionarBolhaDom(msgUsuario);
   adicionarBolhaDom(msgTio);
