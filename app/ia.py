@@ -28,7 +28,7 @@ PROMPT_CLASSIFICADOR = (
     "EXCEÇÃO — \"aposto que\" com previsão de RESULTADO:\n"
     "  \"aposto que hoje sai\" → true (é previsão, não figura de linguagem)\n"
     "  \"aposto que vc sabe\" → false (figura de linguagem)\n\n"
-    "Responda APENAS {\"eh_aposta\": true} ou {\"eh_aposta\": false}."
+    "Responda APENAS com JSON válido: {\"eh_aposta\": true} ou {\"eh_aposta\": false}."
 )
 
 PADROES_APOSTA = re.compile(
