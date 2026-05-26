@@ -8,6 +8,11 @@ const API_URL = '/api/chat';
 let conversa = null;
 let aguardando = false;
 
+function _limiteExpirou() {
+  if (!conversa || !conversa.limiteAtingidoEm) return false;
+  return (Date.now() - new Date(conversa.limiteAtingidoEm).getTime()) >= 24 * 60 * 60 * 1000;
+}
+
 function trackEvent(nome, params) {
   if (typeof window.gtag === 'function') {
     window.gtag('event', nome, params || {});
@@ -45,7 +50,11 @@ function inicializar() {
         conversa = JSON.parse(salvo);
         if (typeof conversa.vezesNovoSonho !== 'number') conversa.vezesNovoSonho = 0;
         if (typeof conversa.recusaOfensas !== 'number') conversa.recusaOfensas = 0;
-        renderizarConversa();
+        if (_limiteExpirou()) {
+          criarNovaConversa();
+        } else {
+          renderizarConversa();
+        }
       } catch {
         criarNovaConversa();
       }
@@ -59,6 +68,7 @@ function inicializar() {
     });
     document.getElementById('btn-novo-sonho').addEventListener('click', novoSonho);
     document.getElementById('btn-recuperar-recusa').addEventListener('click', recuperarAposRecusa);
+    document.getElementById('btn-tentar-de-novo').addEventListener('click', tentarDeNovo);
     document.getElementById('input-sonho').addEventListener('keydown', (e) => {
       if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
@@ -133,6 +143,7 @@ function renderizarConversa() {
 
   document.getElementById('botao-recuperar-recusa').classList.add('hidden');
   document.getElementById('botao-novo-sonho').classList.add('hidden');
+  document.getElementById('botao-tentar-de-novo').classList.add('hidden');
 
   conversa.mensagens.forEach((msg) => {
     adicionarBolhaDom(msg, false);
@@ -293,7 +304,10 @@ function tratarResposta(data) {
     adicionarBolhaDom(msg);
     trackEvent('veredito_recebido', { eh_ultimo: !!data.eh_ultimo });
     setInputDesabilitado(true);
-    if (data.eh_ultimo) conversa.limiteAtingido = true;
+    if (data.eh_ultimo) {
+      conversa.limiteAtingido = true;
+      conversa.limiteAtingidoEm = new Date().toISOString();
+    }
     document.getElementById('botao-novo-sonho').classList.remove('hidden');
   } else {
     if (conversa.etapa === 'aguardando_sonho') {
@@ -316,6 +330,7 @@ function tratarErro(status, data) {
   if (status === 429) {
     texto = data?.mensagem || COPY.LIMITE;
     desabilitarPermanente = true;
+    conversa.limiteAtingidoEm = conversa.limiteAtingidoEm || new Date().toISOString();
   } else if (status === 503) {
     texto = data?.mensagem || COPY.IA_FORA;
     desabilitarPermanente = true;
@@ -370,6 +385,10 @@ function recuperarAposRecusa() {
     setInputDesabilitado(false);
     scrollParaFim();
   }, 1800);
+}
+
+function tentarDeNovo() {
+  criarNovaConversa();
 }
 
 function novoSonho() {
@@ -451,6 +470,7 @@ function atualizarUI() {
     setInputDesabilitado(true, true);
     document.getElementById('botao-novo-sonho').classList.add('hidden');
     document.getElementById('botao-recuperar-recusa').classList.add('hidden');
+    document.getElementById('botao-tentar-de-novo').classList.remove('hidden');
     setStatusOffline();
     return;
   }
@@ -481,6 +501,9 @@ function atualizarUI() {
   if (conversa.mensagens.some((m) => m.erroPermanente)) {
     setInputDesabilitado(true, true);
     setStatusOffline();
+    if (conversa.limiteAtingidoEm) {
+      document.getElementById('botao-tentar-de-novo').classList.remove('hidden');
+    }
   }
 }
 
