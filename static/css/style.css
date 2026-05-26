@@ -231,7 +231,8 @@ body {
 
 /* ─── Botões de ação ──────────────────────────────────────────────────────── */
 #botao-novo-sonho,
-#botao-recuperar-recusa {
+#botao-recuperar-recusa,
+#botao-tentar-de-novo {
   display: flex;
   justify-content: center;
   padding: 6px 16px 10px;
@@ -239,7 +240,8 @@ body {
 }
 
 #btn-novo-sonho,
-#btn-recuperar-recusa {
+#btn-recuperar-recusa,
+#btn-tentar-de-novo {
   background: var(--verde-escuro);
   color: var(--dourado);
   border: none;
@@ -256,7 +258,9 @@ body {
 #btn-novo-sonho:hover,
 #btn-novo-sonho:active,
 #btn-recuperar-recusa:hover,
-#btn-recuperar-recusa:active {
+#btn-recuperar-recusa:active,
+#btn-tentar-de-novo:hover,
+#btn-tentar-de-novo:active {
   opacity: 0.85;
 }
 

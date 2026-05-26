@@ -501,9 +501,7 @@ function atualizarUI() {
   if (conversa.mensagens.some((m) => m.erroPermanente)) {
     setInputDesabilitado(true, true);
     setStatusOffline();
-    if (conversa.limiteAtingidoEm) {
-      document.getElementById('botao-tentar-de-novo').classList.remove('hidden');
-    }
+    document.getElementById('botao-tentar-de-novo').classList.remove('hidden');
   }
 }
 
