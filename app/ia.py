@@ -125,37 +125,51 @@ def conversar(mensagens: list[dict]) -> dict:
     respostas_ia = _contar_respostas_ia(mensagens)
     msgs_openai = montar_mensagens(mensagens, respostas_ia)
 
+    _INSTRUCAO_SEM_NUMEROS = (
+        "ERRO: sua resposta continha números ou era JSON inválido. "
+        "Reescreva o texto SEM nenhum algarismo (0-9). "
+        "Isso inclui número de grupo, dezena, centena, milhar — qualquer dígito. "
+        "Responda APENAS com o JSON válido: {\"tipo\": \"...\", \"texto\": \"...\"}"
+    )
+    _INSTRUCAO_VEREDITO = (
+        "LIMITE DE PERGUNTAS ATINGIDO. Você já fez 2 perguntas. "
+        "Agora responda APENAS com o VEREDITO final. Não pode mais perguntar. "
+        "OBRIGATÓRIO: mencione o nome de um dos 25 animais do jogo do bicho. "
+        "PROIBIDO: qualquer algarismo (0-9) no texto."
+    )
+
     try:
         try:
             data = _chamar_api(msgs_openai, temperature=0.8, max_tokens=300)
             _validar(data)
         except ValueError as e:
             logger.warning("Primeira tentativa inválida: %s. Tentando novamente.", e)
-            instrucao = (
-                "ERRO: sua resposta continha números. "
-                "Reescreva o texto SEM nenhum algarismo (0-9). "
-                "Isso inclui número de grupo, dezena, centena, milhar — qualquer dígito. "
-                "Responda APENAS com o JSON: {\"tipo\": \"...\", \"texto\": \"...\"}"
-            )
             data = _chamar_api(
-                list(msgs_openai) + [{"role": "user", "content": instrucao}],
+                list(msgs_openai) + [{"role": "user", "content": _INSTRUCAO_SEM_NUMEROS}],
                 temperature=0.8, max_tokens=300,
             )
             _validar(data)
 
         if respostas_ia >= 2 and data["tipo"] == "pergunta":
             logger.warning("IA estourou limite de 2 perguntas. Forçando veredito.")
-            instrucao = (
-                "LIMITE DE PERGUNTAS ATINGIDO. Você já fez 2 perguntas. "
-                "Agora responda APENAS com o VEREDITO final. Não pode mais perguntar."
-            )
-            data = _chamar_api(
-                list(msgs_openai) + [{"role": "user", "content": instrucao}],
-                temperature=0.3, max_tokens=300,
-            )
-            _validar(data)
+            try:
+                data = _chamar_api(
+                    list(msgs_openai) + [{"role": "user", "content": _INSTRUCAO_VEREDITO}],
+                    temperature=0.3, max_tokens=300,
+                )
+                _validar(data)
+            except ValueError as e:
+                logger.warning("Forçar veredito falhou: %s. Tentando novamente.", e)
+                data = _chamar_api(
+                    list(msgs_openai) + [{"role": "user", "content": _INSTRUCAO_VEREDITO + " ERRO: resposta anterior inválida. Corrija."}],
+                    temperature=0.3, max_tokens=300,
+                )
+                _validar(data)
 
         return data
+    except ValueError as e:
+        logger.warning("IA não gerou resposta válida após todas as tentativas: %s", e)
+        return {"tipo": "pergunta", "texto": "Eita, esse sonho aqui me deixou confuso. Tenta me contar de novo com outros detalhes?"}
     except openai.APIStatusError as e:
         logger.error("Erro de status da API de IA: %s", e)
         raise

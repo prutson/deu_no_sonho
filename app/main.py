@@ -1,3 +1,4 @@
+import asyncio
 import json
 import logging
 import time
@@ -118,7 +119,7 @@ async def chat(request: Request, body: ChatRequest):
 
     try:
         mensagens = [m.model_dump() for m in body.mensagens]
-        resultado = conversar(mensagens)
+        resultado = await asyncio.to_thread(conversar, mensagens)
     except (openai.APIStatusError, openai.OpenAIError) as e:
         logger.error("IA indisponível: %s", e)
         return JSONResponse(
