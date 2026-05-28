@@ -132,8 +132,10 @@ def conversar(mensagens: list[dict]) -> dict:
         except ValueError as e:
             logger.warning("Primeira tentativa inválida: %s. Tentando novamente.", e)
             instrucao = (
-                "Atenção: responda APENAS com o JSON no formato pedido. "
-                "NUNCA inclua dezenas, centenas, milhares ou qualquer número de aposta."
+                "ERRO: sua resposta continha números. "
+                "Reescreva o texto SEM nenhum algarismo (0-9). "
+                "Isso inclui número de grupo, dezena, centena, milhar — qualquer dígito. "
+                "Responda APENAS com o JSON: {\"tipo\": \"...\", \"texto\": \"...\"}"
             )
             data = _chamar_api(
                 list(msgs_openai) + [{"role": "user", "content": instrucao}],
